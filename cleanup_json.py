@@ -1,31 +1,17 @@
 import json
 import sys
 
-# fields to remove
-notneeded_fields = ['size', 'gender']
-
-fields_to_keep = ['product title', 'review title', 'review contents']
-
-
-# parse the input json file and remove unnecessary fields and write to the output json file
-def remove_fields(inpath, outpath):
-	with open(inpath, 'r') as orig:
-		data = json.load(orig)
-		print("Original data", data)
-		cleared_data = {}
-
-	for key, value in data.items():
-		if key not in notneeded_fields:
-			cleared_data[key] = value
-
-	with open(outpath, 'w') as modif:
-		json.dump(cleared_data, modif)
+common_fields = ['product title', 'product description']
+review_fields = ['review title', 'review contents']
 
 
 def take_only_needed_fields(inpath, outpath):
 	with open(inpath, 'r') as orig:
 		data = json.load(orig)
-		print("Original data", data)
+		output_object = {}
+		
+		for common in common_fields:
+			output_object[common] = data[0][common]
 		all_crealed_reviews = []
 
 	for review in data:
@@ -33,12 +19,14 @@ def take_only_needed_fields(inpath, outpath):
 		print(review.items())
 		cleared_review = {}
 		for key, value in review.items():
-			if key in fields_to_keep:
+			if key in review_fields:
 				cleared_review[key] = value
 		all_crealed_reviews.append(cleared_review)
 
+	output_object['reviews'] = all_crealed_reviews
+
 	with open(outpath, 'w') as modif:
-		json.dump(all_crealed_reviews, modif, ensure_ascii=False)
+		json.dump(output_object, modif, ensure_ascii=False)
 
 
 #remove_fields(sys.argv[1], sys.argv[2])
